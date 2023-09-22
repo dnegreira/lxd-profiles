@@ -1,0 +1,84 @@
+ user.user-data: |
+    #cloud-config
+    snap:
+      commands:
+        - snap install nvim --classic
+        - snap install cmadison
+    locale: nl_NL.UTF-8
+    packages:
+      - zsh
+      - ssh
+      - git
+      - auto-apt-proxy
+    users:
+      - name: dnegreira
+        ssh_import_id:
+          - lp:dnegreira
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /usr/bin/zsh
+        groups: users, admin, lxd
+    runcmd:
+      - [su, dnegreira, -c, "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /home/dnegreira/install-omz.sh)" ]
+      - [su, dnegreira, -c, "chmod +x /home/dnegreira/install-omz.sh" ]
+      - [su, dnegreira, -c, "/home/dnegreira/install-omz.sh --keep-zshrc --unattended" ]
+      - [su, dnegreira, -c, "rm -f /home/dnegreira/install-omz.sh" ]
+      - [su, dnegreira, -c, "git clone https://github.com/dnegreira/nvim.git /home/dnegreira/nvim" ]
+      - [su, dnegreira, -c, "cp -rp /home/dnegreira/nvim/.config /home/dnegreira/" ]
+      - echo "StreamLocalBindUnlink yes" > /etc/ssh/sshd_config.d/streamlocalbindunlink.conf
+      - systemctl restart sshd
+      - DEBIAN_FRONTEND=noninteractive apt install -y build-essential openstack-pkg-tools devscripts ubuntu-dev-tools
+    write_files:
+      - content: |
+          export ZSH="$HOME/.oh-my-zsh"
+          ZSH_THEME="bira"
+          plugins=(git)
+          source $ZSH/oh-my-zsh.sh
+          export DEBEMAIL="david.negreira@canonical.com"
+          export DEBFULLNAME="David Negreira"
+          export EDITOR=nvim
+        path: /home/dnegreira/.zshrc
+        owner: dnegreira:dnegreira
+        permissions:  0444
+        defer: true
+      - content: !!binary |
+          mQGNBGL/TtQBDACxYbBfq5X8loKmUD4rMmvUeIu1rYZr9HsAk7zC+O5OjvjHAP2u/qSYSKTb44mE
+          KSiJT5A0szlJMJn6f9yyAlv0u5k20vBpMkGcZXLve0z2MXKXBLD5Li8Ne24IOA/yjozVJGUIxsL1
+          Mvy4jpDwnInjvdBeCvmr0v/2JhPSPNPT1Hw8m7rg8za2eh1GxtyDrOTA1TezffgIve2s81WKoFiU
+          p/PkA0aCR3S8QbZnjBa5fuhaKh5EVKKQ0G47I5YBIU/9UIai1nXxoqcJWPDn5Js647zyChVTOGmF
+          fhPOyY7uId1H9vUd4AdH3NcP2sfHYNySAg243a6XVxtl7Yc4umPAMpwMhlcBZUCbLFFnyutfZ3GS
+          /X7OAA3QvjeZmT893CbvaDA/8bIMaPAy3CDA2J1I7WAXjV/yN5OuvmjQSSmD13R3FL9oztRTYE/j
+          PUxQnSH5rph3SVM6DavBNOCLfDdjJMPldo6kGB8XrC2ZT400lu/vsRrhhMEXX4vCgE+VcI0AEQEA
+          AbQtRGF2aWQgTmVncmVpcmEgPGRhdmlkLm5lZ3JlaXJhQGNhbm9uaWNhbC5jb20+iQHUBBMBCgA+
+          FiEE0trG8JWRye0UG4lDjUpv8rty6Z0FAmL/TtQCGwMFCQPCZwAFCwkIBwIGFQoJCAsCBBYCAwEC
+          HgECF4AACgkQjUpv8rty6Z2wcwv/cP0RQAAd2dRlTODnhoJ00jMUxrYQuebWZjd0dNwBdHVeJNRM
+          JwCpCLp37shgxjqDFVs97TrmNS0VUmkxDRQdJJrC1h9sAn3QF/xbt3d1Ip1vO1xizq85J4lgnial
+          GqhizaVdwrxOQF1VoxJO6RiJlx/o07rLhje+wopYvx2FIWbrexVx/RcbpI6hFVHNb8d0cpGfyqJe
+          EeKUs5q01qmtNP389YDnzp2anMVImZdFGXjN/49UcoNxhP+7k8NwAaR7bpNaDyCcj5CxR1Qk1vkq
+          i2J0M/flTtcPLB3SUpCpcFf1shnmcrv7IlUlExiaShgy+XH7zuDQAdlMxMNdMDo7t4TZRi964B/H
+          hGmGYpLbTFmX2p45yspUXxbP4CLbB9V8J/Zd2TDZ0D+/UpZ84Pk3CahirZ7+9E8ppzG5Jvz6nTvO
+          ukW3JCF2AGER2wkXaP6TkZYVHftRn9rR7BplCcpAT45SiVroG3gpb/T5NgFc1seawzTfgslMG/RX
+          1nHn7fZAuQGNBGL/TtQBDADNzJ8ic3RS0UX80Xak4Y8RuuQrpnCJutg0I3nHWkkFH7JhVmMxcI+B
+          hh3Tk8tIiggYF1Lcd6Te23FQBU74deIeGO5CKct33bhnzEYkuKYtp0EBjfgVyN+vRqUiwY1AXV4m
+          fTJNFl0gLH1aWEPFwmD+NHfSacHhy1XcIExR+mmH0ULkFszsUxPDogbOlfR9plY/VlS8EM1Rz1op
+          lZc5BlT01PWcVmsabMJBjwnfOpM921FwP3sFz5CdirRUEPYB0v23B9ruJ2MiQ188EwlSk7LbxAsZ
+          WCrUPIxCO9ESplNeSThsE5E/+WpQITsXslDgZuWwEdOJZwMfKbiq5Nxquvb/PvOUhHJ1z8WRGFFT
+          5bKrAEKxx4K5HVjOzg+2k4DxnNa293QraehwiMdqJHroTLrGDe/WuDI7cbaIwyKEa87RwNyR6Fy4
+          qXM6hf4RXQsnhPg8eae7m7K4uwlp91LMUwyOyuaoSC6DdQ8P9h2X4MlsMEEgI7ZHW7re8tWUsloK
+          7xMAEQEAAYkBvAQYAQoAJhYhBNLaxvCVkcntFBuJQ41Kb/K7cumdBQJi/07UAhsMBQkDwmcAAAoJ
+          EI1Kb/K7cumdQewMAICNsIeeA1lKcq2YuZxooKelzenLx7/ObsH8Fi0P4GHzIpWYd6h+T9S5RQ/p
+          UxKeQa3xVyC+m8GGCafgLaMT9THpke4hyeDv7rSN8S2ijhpKA6oFuHCRNQXc8rOH3//Q0ZMDkGAI
+          QrWfRigyUYKaszE3LBHlXbAC+Pq7Ybb/TyMPGwg2nELPLyG12e4WZykTb40G1oiCaX3jtGZOaRur
+          yP1RoPnZtJTT8yb5IRrADjUGGEhNDNOiEPZclhhyU0Ikqr+3TkbldsjDW6tTghzJZY714O1pmm5n
+          tcb+Y5LHWuAeX6uDFmhCbxV5V/34ogXYLECeUY7jHzv0riLfnxCXOjBGznDyBRTBTk0pjRcb3rGF
+          ED9oVQNMvxU0OCHdjtbaWsqwGcI6v431omGfXc+73peA1l8S+S7JpsDkslM+lxJpvIj0Ysibwc1B
+          SV0+CgKm8/H3k0Ty89VHMDVG/KZ/5C4tf0CLlPvST33oxxO7LnaOHAdF8Z4TM9eHMZiae4Papw==
+        path: /home/dnegreira/david-negreira-canonical-com.gpg
+        owner: dnegreira:dnegreira
+        permissions: 0444
+        defer: true
+      - content: |
+          use-agent
+        path: /home/dnegreira/.gnupg/gpg.conf
+        owner: dnegreira:dnegreira
+        permissions: 0400
+        defer: true
