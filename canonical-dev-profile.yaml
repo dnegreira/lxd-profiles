@@ -1,4 +1,5 @@
- user.user-data: |
+config:
+  user.user-data: |
     #cloud-config
     snap:
       commands:
@@ -82,3 +83,16 @@
         owner: dnegreira:dnegreira
         permissions: 0400
         defer: true
+description: Default LXD profile for project openstack-dev
+devices:
+  eth0:
+    name: eth0
+    network: lxdbr0
+    type: nic
+  root:
+    path: /
+    pool: default
+    type: disk
+name: default
+used_by:
+- /1.0/instances/dev-charm-designate?project=openstack-dev
