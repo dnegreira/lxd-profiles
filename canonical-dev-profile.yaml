@@ -1,3 +1,5 @@
+name: default
+description: Default LXD Profile for Canonical work
 config:
   user.user-data: |
     #cloud-config
@@ -11,6 +13,8 @@ config:
       - ssh
       - git
       - auto-apt-proxy
+      - python3-virtualenv
+      - python3-venv
     users:
       - name: dnegreira
         ssh_import_id:
@@ -25,6 +29,8 @@ config:
       - [su, dnegreira, -c, "rm -f /home/dnegreira/install-omz.sh" ]
       - [su, dnegreira, -c, "git clone https://github.com/dnegreira/nvim.git /home/dnegreira/nvim" ]
       - [su, dnegreira, -c, "cp -rp /home/dnegreira/nvim/.config /home/dnegreira/" ]
+      - [su, dnegreira, -c, "git config --global user.email 'david.negreira@canonical.com'" ]
+      - [su, dnegreira, -c, "git config --global user.name 'David Negreira'" ]
       - echo "StreamLocalBindUnlink yes" > /etc/ssh/sshd_config.d/streamlocalbindunlink.conf
       - systemctl restart sshd
       - DEBIAN_FRONTEND=noninteractive apt install -y build-essential openstack-pkg-tools devscripts ubuntu-dev-tools
@@ -83,7 +89,6 @@ config:
         owner: dnegreira:dnegreira
         permissions: 0400
         defer: true
-description: Default LXD profile for project openstack-dev
 devices:
   eth0:
     name: eth0
@@ -93,6 +98,3 @@ devices:
     path: /
     pool: default
     type: disk
-name: default
-used_by:
-- /1.0/instances/dev-charm-designate?project=openstack-dev
