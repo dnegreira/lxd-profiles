@@ -7,6 +7,7 @@ config:
       commands:
         - snap install nvim --classic
         - snap install cmadison
+        - snap install bash-language-server --classic
     locale: nl_NL.UTF-8
     packages:
       - zsh
@@ -15,6 +16,8 @@ config:
       - auto-apt-proxy
       - python3-virtualenv
       - python3-venv
+      - shfmt
+      - shellcheck
     users:
       - name: dnegreira
         ssh_import_id:
@@ -48,37 +51,44 @@ config:
         permissions:  0444
         defer: true
       - content: !!binary |
-          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
+          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
+          =X+Ob
         path: /home/dnegreira/david-negreira-canonical-com.gpg
         owner: dnegreira:dnegreira
         permissions: 0444
